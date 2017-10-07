@@ -1,59 +1,132 @@
 import numpy as np 
 import pandas as pd 
-from sklearn.cluster import DBSCAN, KMeans
+from sklearn.cluster import DBSCAN, KMeans, AgglomerativeClustering
 from Offences import Offences
 import time
 from datetime import datetime
-dataframe = pd.read_csv("./datasets_csv/Brisbane_South.csv",usecols=[0,1,2,3,4,5,6,7,8,9])
+import matplotlib.pyplot as plt
+from matplotlib import style
+from sklearn import metrics
 
-arr = dataframe.as_matrix()
+
+def getProgressiveClassOfUnemployment():
+    dataframe = pd.read_csv("./datasets_csv/Employment-Data-Brisbane.csv",usecols=[0,6])
+
+    arr = dataframe.as_matrix()
+
+    X = []
 
 
-offends_code = []
-for i in arr[:,6]:
+    for i in arr:
+        if i[0] >=2007:
+            i[0] = i[0]-2007
+            X.append(i)
+
+    X = np.array(X)
+    print(X)
+    db = DBSCAN(eps=1.2, min_samples=2, metric='euclidean', algorithm='brute').fit(X) # good with eps=1.2 and min_samples=3
+
+    core_samples_mask = np.zeros_like(db.labels_, dtype=None)
+    core_samples_mask[db.core_sample_indices_] = True
+    labels = db.labels_
+    print (labels)
+
+
+    # Number of clusters in labels, ignoring noise if present.
+    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+
+
+    print('Estimated number of clusters: %d' % n_clusters_)
+
+    print("Silhouette Coefficient: %0.3f"
+            % metrics.silhouette_score(X, labels))
+
+
+    for i in X:
+        i[0] += 2007
+
+    string_label =[]
+    for i in range(len(labels)):
+        if labels[i] == 0:
+            string_label.append("LOW")
+        if labels[i] == 1:
+            string_label.append("MEDIUM")
+        if labels[i] == 2:
+            string_label.append("HIGH")
+        if labels[i] == -1:
+            string_label.append("VERY_HIGH")
+
+    string_label = np.array(string_label)
+    df = pd.DataFrame(np.column_stack([X[:,0], X[:,1],string_label[:]]),
+    columns = ["MeshBlockId",'Unemployment Rate (%)','label'])
+
+    df.to_csv("Employment-Data-Brisbane-labeled.csv", sep=',', encoding= "utf-8")
+
+def getProgressiveClassOfCPI():
+    dataframe = pd.read_csv("./datasets_csv/Consumer_Price_Index_of_Brisbane_March_Quarter_1999_to_June_Quarter_2017.csv",usecols=[0,1,3,4])
+
+    arr = dataframe.as_matrix()
+
+    X = []
+
+
+    for i in arr:
+        if i[0] >=2006 and i[0]!=2017:
+            if i[1]==12:
+                i[0] = i[0]-2006
+                X.append([i[0],i[-1]])
+        elif i[0]==2017:
+            if i[1]==6:
+                i[0] = i[0]-2006
+                X.append([i[0],2.3])
+
+    X = np.array(X)
+    print(X)
+    # db = DBSCAN(eps=1.192, min_samples=2, metric='euclidean', algorithm='brute').fit(X) # good with eps=1.2 and min_samples=3
+
+    # core_samples_mask = np.zeros_like(db.labels_, dtype=None)
+    # core_samples_mask[db.core_sample_indices_] = True
     
-    if i == "GOOD_ORDER":
-        offends_code.append(54)
-    elif i=="DRUG":
-        offends_code.append(45)
-    elif i=="THEFT":
-        offends_code.append(30)
-    elif i=="PROPERTY_DAMAGE":
-        offends_code.append(28)
-    elif i=="HANDLING_STOLEN_GOODS":
-        offends_code.append(39)
-    elif i=="ASSAULT":
-        offends_code.append(8)
-    elif i=="UNLAWFUL_ENTRY":
-        offends_code.append(21)
-    elif i=="UNLAWFUL_MOTOR_VEHICLE":
-        offends_code.append(29)
-    elif i=="HOMOCIDE":
-        offends_code.append(1)
-    elif i=="ROBBERY":
-        offends_code.append(14)
-    elif i=="LIQUOR":
-        offends_code.append(47)
-    elif i=="FRAUD":
-        offends_code.append(35)
-    elif i=="ARSON":
-        offends_code.append(27)
 
-arr[:,6] = np.array(offends_code)
-print (arr[:,6])
+    kmeans = KMeans(n_clusters=12).fit(X)
+
+    labels = kmeans.labels_
+    kc = kmeans.cluster_centers_
+    print (labels)
+    print (kmeans.score(X))
+    plt.scatter(X[:,0],X[:,1],hold=True, marker="o")
+    plt.scatter(kc[:,0],kc[:,1],marker="*")
+    plt.show()
 
 
-X= np.column_stack([arr[:,1],arr[:,5], arr[:,6],arr[:,7],[time.mktime(datetime.strptime(i,'%Y-%m-%dT%H:%M:%S').timetuple())/(1e9) for i in arr[:,8]]])
-
-db = DBSCAN(eps=0.5, min_samples=5, metric='cosine', algorithm='brute',n_jobs=-1).fit(X)
-core_samples_mask = np.zeros_like(db.labels_, dtype=None)
-core_samples_mask[db.core_sample_indices_] = True
-labels = db.labels_
-print (labels)
+    # Number of clusters in labels, ignoring noise if present.
+    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
 
 
-# Number of clusters in labels, ignoring noise if present.
-n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+    print('Estimated number of clusters: %d' % n_clusters_)
+
+    print("Silhouette Coefficient: %0.3f"
+            % metrics.silhouette_score(X, labels))
 
 
-print('Estimated number of clusters: %d' % n_clusters_)
+    # for i in X:
+    #     i[0] += 2007
+
+    # string_label =[]
+    # for i in range(len(labels)):
+    #     if labels[i] == 0:
+    #         string_label.append("LOW")
+    #     if labels[i] == 1:
+    #         string_label.append("MEDIUM")
+    #     if labels[i] == 2:
+    #         string_label.append("HIGH")
+    #     if labels[i] == -1:
+    #         string_label.append("VERY_HIGH")
+
+    # string_label = np.array(string_label)
+    # df = pd.DataFrame(np.column_stack([X[:,0], X[:,1],string_label[:]]),
+    # columns = ["MeshBlockId",'Unemployment Rate (%)','label'])
+
+    # df.to_csv("Employment-Data-Brisbane-labeled.csv", sep=',', encoding= "utf-8")  
+
+getProgressiveClassOfCPI()

@@ -1,0 +1,91 @@
+
+R version 3.4.1 (2017-06-30) -- "Single Candle"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> library(readr)
+> library(arules)
+Loading required package: Matrix
+
+Attaching package: ‘arules’
+
+The following objects are masked from ‘package:base’:
+
+    abbreviate, write
+
+> generateAssociationRule <- function(){
++     data_set <- read_csv("../datasets_csv/Brisbane_Inner_Merged_Information.csv")
++     data_set_min <-subset(data_set,select=c("Suburb","Postcode","OffenceCount","QpsOffence","Solved","Unemployment_rating"))
++     part_of_data <- data_set_min[,4:6]
++     part_of_data <-data.frame(sapply(part_of_data,as.factor))
++     rules <- apriori(part_of_data,parameter = list(supp=0.2, conf=0.5,minlen=2))
++     rules <- sort(rules, by="lift")
++     inspect(rules)
++ }
+> 
+> 
+> generateAssociationRule()
+Parsed with column specification:
+cols(
+  index = col_integer(),
+  MeshBlockId = col_integer(),
+  QpsOffenceId = col_integer(),
+  Suburb = col_character(),
+  Postcode = col_integer(),
+  OffenceCount = col_integer(),
+  QpsOffence = col_character(),
+  Solved = col_character(),
+  ReportDate = col_datetime(format = ""),
+  StartDate = col_datetime(format = ""),
+  Unemployment_rating = col_character()
+)
+Apriori
+
+Parameter specification:
+ confidence minval smax arem  aval originalSupport maxtime support minlen
+        0.5    0.1    1 none FALSE            TRUE       5     0.2      2
+ maxlen target   ext
+     10  rules FALSE
+
+Algorithmic control:
+ filter tree heap memopt load sort verbose
+    0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+
+Absolute minimum support count: 36134 
+
+set item appearances ...[0 item(s)] done [0.00s].
+set transactions ...[18 item(s), 180673 transaction(s)] done [0.03s].
+sorting and recoding items ... [6 item(s)] done [0.00s].
+creating transaction tree ... done [0.05s].
+checking subsets of size 1 2 done [0.00s].
+writing ... [3 rule(s)] done [0.00s].
+creating S4 object  ... done [0.02s].
+    lhs                           rhs                support   confidence
+[1] {QpsOffence=THEFT}         => {Solved=False}     0.2459139 0.6735390 
+[2] {Solved=False}             => {QpsOffence=THEFT} 0.2459139 0.5534931 
+[3] {Unemployment_rating=HIGH} => {Solved=True}      0.2075850 0.5677243 
+    lift    
+[1] 1.515975
+[2] 1.515975
+[3] 1.021628
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  2.887   0.230   3.321 
