@@ -25,7 +25,7 @@ def mergeSet():
         year = int(dt.year)
         if year == 2006:
             label.append(temp[2007])
-        else:
+        elif year>=2007:
             if dt.month >6:
                 if year !=2017:
                     label.append(temp[year+1])

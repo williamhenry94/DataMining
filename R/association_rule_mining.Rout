@@ -31,12 +31,14 @@ The following objects are masked from ‘package:base’:
 
 > generateAssociationRule <- function(){
 +     data_set <- read_csv("../datasets_csv/Brisbane_Inner_Merged_Information.csv")
-+     data_set_min <-subset(data_set,select=c("Suburb","Postcode","OffenceCount","QpsOffence","Solved","Unemployment_rating"))
-+     part_of_data <- data_set_min[,4:6]
++     data_set_min <-subset(data_set,select=c("Suburb","QpsOffence","Solved","Unemployment_rating"))
++     part_of_data <- data_set_min[,1:4]
 +     part_of_data <-data.frame(sapply(part_of_data,as.factor))
-+     rules <- apriori(part_of_data,parameter = list(supp=0.2, conf=0.5,minlen=2))
-+     rules <- sort(rules, by="lift")
++     rules <- apriori(part_of_data,parameter = list(supp=0.01, conf=0.55,minlen=2))
++     rules <- sort(rules, by="confidence")
++    
 +     inspect(rules)
++     
 + }
 > 
 > 
@@ -59,7 +61,7 @@ Apriori
 
 Parameter specification:
  confidence minval smax arem  aval originalSupport maxtime support minlen
-        0.5    0.1    1 none FALSE            TRUE       5     0.2      2
+       0.55    0.1    1 none FALSE            TRUE       5    0.01      2
  maxlen target   ext
      10  rules FALSE
 
@@ -67,25 +69,183 @@ Algorithmic control:
  filter tree heap memopt load sort verbose
     0.1 TRUE TRUE  FALSE TRUE    2    TRUE
 
-Absolute minimum support count: 36134 
+Absolute minimum support count: 1806 
 
 set item appearances ...[0 item(s)] done [0.00s].
-set transactions ...[18 item(s), 180673 transaction(s)] done [0.03s].
-sorting and recoding items ... [6 item(s)] done [0.00s].
-creating transaction tree ... done [0.05s].
-checking subsets of size 1 2 done [0.00s].
-writing ... [3 rule(s)] done [0.00s].
-creating S4 object  ... done [0.02s].
-    lhs                           rhs                support   confidence
-[1] {QpsOffence=THEFT}         => {Solved=False}     0.2459139 0.6735390 
-[2] {Solved=False}             => {QpsOffence=THEFT} 0.2459139 0.5534931 
-[3] {Unemployment_rating=HIGH} => {Solved=True}      0.2075850 0.5677243 
-    lift    
-[1] 1.515975
-[2] 1.515975
-[3] 1.021628
+set transactions ...[45 item(s), 180673 transaction(s)] done [0.04s].
+sorting and recoding items ... [32 item(s)] done [0.01s].
+creating transaction tree ... done [0.10s].
+checking subsets of size 1 2 3 4 done [0.00s].
+writing ... [85 rule(s)] done [0.00s].
+creating S4 object  ... done [0.03s].
+     lhs                                    rhs                       support confidence     lift
+[1]  {Suburb=KANGAROO POINT,                                                                     
+      QpsOffence=GOOD_ORDER}             => {Solved=True}          0.01644407  0.9923180 1.785690
+[2]  {QpsOffence=GOOD_ORDER,                                                                     
+      Unemployment_rating=VERY LOW}      => {Solved=True}          0.03056904  0.9922745 1.785612
+[3]  {QpsOffence=GOOD_ORDER,                                                                     
+      Unemployment_rating=LOW}           => {Solved=True}          0.03116127  0.9922453 1.785559
+[4]  {Suburb=BRISBANE CITY,                                                                      
+      QpsOffence=GOOD_ORDER}             => {Solved=True}          0.02310805  0.9876981 1.777377
+[5]  {QpsOffence=GOOD_ORDER}             => {Solved=True}          0.09636747  0.9849522 1.772435
+[6]  {Suburb=FORTITUDE VALLEY,                                                                   
+      QpsOffence=GOOD_ORDER}             => {Solved=True}          0.01281874  0.9813559 1.765964
+[7]  {Suburb=FORTITUDE VALLEY,                                                                   
+      QpsOffence=DRUG,                                                                           
+      Unemployment_rating=VERY LOW}      => {Solved=True}          0.01419692  0.9805046 1.764432
+[8]  {QpsOffence=GOOD_ORDER,                                                                     
+      Unemployment_rating=MEDIUM}        => {Solved=True}          0.02863737  0.9716432 1.748485
+[9]  {Suburb=BOWEN HILLS,                                                                        
+      QpsOffence=DRUG}                   => {Solved=True}          0.01294051  0.9697221 1.745028
+[10] {QpsOffence=DRUG,                                                                           
+      Unemployment_rating=VERY LOW}      => {Solved=True}          0.03348591  0.9673809 1.740815
+[11] {Suburb=SOUTH BRISBANE,                                                                     
+      QpsOffence=DRUG}                   => {Solved=True}          0.01092028  0.9624390 1.731922
+[12] {Suburb=FORTITUDE VALLEY,                                                                   
+      QpsOffence=DRUG}                   => {Solved=True}          0.05061631  0.9622264 1.731540
+[13] {QpsOffence=DRUG,                                                                           
+      Unemployment_rating=LOW}           => {Solved=True}          0.03281619  0.9556738 1.719748
+[14] {Suburb=FORTITUDE VALLEY,                                                                   
+      QpsOffence=DRUG,                                                                           
+      Unemployment_rating=MEDIUM}        => {Solved=True}          0.02175201  0.9485880 1.706997
+[15] {QpsOffence=DRUG}                   => {Solved=True}          0.15480454  0.9450583 1.700646
+[16] {QpsOffence=DRUG,                                                                           
+      Unemployment_rating=HIGH}          => {Solved=True}          0.02065610  0.9426623 1.696334
+[17] {QpsOffence=HANDLING_STOLEN_GOODS}  => {Solved=True}          0.02416520  0.9411511 1.693615
+[18] {QpsOffence=DRUG,                                                                           
+      Unemployment_rating=MEDIUM}        => {Solved=True}          0.06784633  0.9301867 1.673884
+[19] {Suburb=BRISBANE CITY,                                                                      
+      QpsOffence=DRUG}                   => {Solved=True}          0.03467591  0.8993684 1.618426
+[20] {Suburb=BRISBANE CITY,                                                                      
+      QpsOffence=DRUG,                                                                           
+      Unemployment_rating=MEDIUM}        => {Solved=True}          0.01445152  0.8597300 1.547096
+[21] {Suburb=FORTITUDE VALLEY,                                                                   
+      QpsOffence=THEFT,                                                                          
+      Unemployment_rating=VERY LOW}      => {Solved=False}         0.01144609  0.8173913 1.839752
+[22] {Suburb=FORTITUDE VALLEY,                                                                   
+      QpsOffence=THEFT,                                                                          
+      Unemployment_rating=LOW}           => {Solved=False}         0.01829825  0.8150888 1.834569
+[23] {QpsOffence=UNLAWFUL_ENTRY,                                                                 
+      Unemployment_rating=VERY LOW}      => {Solved=False}         0.02064503  0.7932795 1.785482
+[24] {QpsOffence=ASSAULT,                                                                        
+      Unemployment_rating=LOW}           => {Solved=True}          0.01744588  0.7909661 1.423355
+[25] {Suburb=FORTITUDE VALLEY,                                                                   
+      QpsOffence=THEFT}                  => {Solved=False}         0.04946506  0.7840161 1.764632
+[26] {QpsOffence=UNLAWFUL_ENTRY,                                                                 
+      Unemployment_rating=LOW}           => {Solved=False}         0.01963769  0.7816700 1.759351
+[27] {QpsOffence=UNLAWFUL_ENTRY}         => {Solved=False}         0.06494606  0.7778588 1.750773
+[28] {QpsOffence=UNLAWFUL_ENTRY,                                                                 
+      Unemployment_rating=MEDIUM}        => {Solved=False}         0.01998085  0.7773471 1.749622
+[29] {Suburb=FORTITUDE VALLEY,                                                                   
+      QpsOffence=ASSAULT}                => {Solved=True}          0.01828718  0.7681934 1.382375
+[30] {QpsOffence=ASSAULT,                                                                        
+      Unemployment_rating=VERY LOW}      => {Solved=True}          0.01344971  0.7639107 1.374668
+[31] {Suburb=SOUTH BRISBANE,                                                                     
+      QpsOffence=THEFT}                  => {Solved=False}         0.02581459  0.7503218 1.688794
+[32] {Suburb=WOOLLOONGABBA,                                                                      
+      QpsOffence=THEFT}                  => {Solved=False}         0.01237042  0.7502518 1.688637
+[33] {QpsOffence=ASSAULT}                => {Solved=True}          0.05457927  0.7452388 1.341068
+[34] {Suburb=FORTITUDE VALLEY,                                                                   
+      QpsOffence=THEFT,                                                                          
+      Unemployment_rating=MEDIUM}        => {Solved=False}         0.01623928  0.7437262 1.673949
+[35] {Suburb=BRISBANE CITY,                                                                      
+      QpsOffence=ASSAULT}                => {Solved=True}          0.01613966  0.7321115 1.317445
+[36] {QpsOffence=FRAUD,                                                                          
+      Unemployment_rating=LOW}           => {Solved=True}          0.01071549  0.7167716 1.289840
+[37] {Suburb=KANGAROO POINT,                                                                     
+      Unemployment_rating=VERY LOW}      => {Solved=True}          0.01063247  0.7054719 1.269507
+[38] {Suburb=FORTITUDE VALLEY,                                                                   
+      Solved=False,                                                                              
+      Unemployment_rating=LOW}           => {QpsOffence=THEFT}     0.01829825  0.7037037 1.927390
+[39] {QpsOffence=ASSAULT,                                                                        
+      Unemployment_rating=MEDIUM}        => {Solved=True}          0.01863034  0.7013961 1.262172
+[40] {Suburb=BRISBANE CITY,                                                                      
+      Solved=False,                                                                              
+      Unemployment_rating=LOW}           => {QpsOffence=THEFT}     0.02477404  0.6983929 1.912844
+[41] {QpsOffence=THEFT,                                                                          
+      Unemployment_rating=VERY LOW}      => {Solved=False}         0.05790572  0.6963525 1.567322
+[42] {QpsOffence=THEFT,                                                                          
+      Unemployment_rating=LOW}           => {Solved=False}         0.08021675  0.6958087 1.566098
+[43] {Suburb=BOWEN HILLS,                                                                        
+      Unemployment_rating=MEDIUM}        => {Solved=True}          0.01203279  0.6743176 1.213444
+[44] {QpsOffence=THEFT}                  => {Solved=False}         0.24591389  0.6735390 1.515975
+[45] {Suburb=BOWEN HILLS}                => {Solved=True}          0.03026462  0.6620656 1.191396
+[46] {Suburb=FORTITUDE VALLEY,                                                                   
+      Unemployment_rating=HIGH}          => {Solved=True}          0.01156786  0.6527171 1.174573
+[47] {Suburb=BRISBANE CITY,                                                                      
+      Unemployment_rating=HIGH}          => {Solved=True}          0.01936094  0.6517608 1.172853
+[48] {QpsOffence=THEFT,                                                                          
+      Unemployment_rating=MEDIUM}        => {Solved=False}         0.08615565  0.6516515 1.466711
+[49] {Suburb=BRISBANE CITY,                                                                      
+      Solved=False,                                                                              
+      Unemployment_rating=VERY LOW}      => {QpsOffence=THEFT}     0.01941076  0.6514954 1.784395
+[50] {Suburb=SOUTH BRISBANE,                                                                     
+      Solved=False}                      => {QpsOffence=THEFT}     0.02581459  0.6471486 1.772490
+[51] {QpsOffence=PROPERTY_DAMAGE,                                                                
+      Unemployment_rating=VERY LOW}      => {Solved=False}         0.01644961  0.6456659 1.453239
+[52] {Suburb=FORTITUDE VALLEY,                                                                   
+      Unemployment_rating=MEDIUM}        => {Solved=True}          0.04750018  0.6404000 1.152409
+[53] {Suburb=BRISBANE CITY,                                                                      
+      Solved=False}                      => {QpsOffence=THEFT}     0.07542356  0.6399756 1.752843
+[54] {Suburb=FORTITUDE VALLEY,                                                                   
+      Solved=False}                      => {QpsOffence=THEFT}     0.04946506  0.6369014 1.744423
+[55] {QpsOffence=THEFT,                                                                          
+      Unemployment_rating=HIGH}          => {Solved=False}         0.02163577  0.6279518 1.413369
+[56] {QpsOffence=PROPERTY_DAMAGE}        => {Solved=False}         0.06157533  0.6264429 1.409973
+[57] {QpsOffence=PROPERTY_DAMAGE,                                                                
+      Unemployment_rating=MEDIUM}        => {Solved=False}         0.02035169  0.6210100 1.397744
+[58] {Suburb=PADDINGTON}                 => {Solved=False}         0.01268037  0.6195241 1.394400
+[59] {Suburb=KANGAROO POINT}             => {Solved=True}          0.03310401  0.6190230 1.113940
+[60] {Suburb=BRISBANE CITY,                                                                      
+      Unemployment_rating=LOW}           => {Solved=True}          0.05668805  0.6150982 1.106878
+[61] {Suburb=BRISBANE CITY,                                                                      
+      Unemployment_rating=MEDIUM}        => {Solved=True}          0.06739247  0.6147011 1.106163
+[62] {Suburb=FORTITUDE VALLEY,                                                                   
+      Unemployment_rating=VERY LOW}      => {Solved=True}          0.02997681  0.6141286 1.105133
+[63] {Suburb=BRISBANE CITY}              => {Solved=True}          0.18681817  0.6131781 1.103422
+[64] {QpsOffence=FRAUD}                  => {Solved=True}          0.03688432  0.6121624 1.101595
+[65] {Suburb=FORTITUDE VALLEY,                                                                   
+      Solved=False,                                                                              
+      Unemployment_rating=MEDIUM}        => {QpsOffence=THEFT}     0.01623928  0.6088400 1.667565
+[66] {Suburb=FORTITUDE VALLEY}           => {Solved=True}          0.12039430  0.6078694 1.093870
+[67] {Suburb=FORTITUDE VALLEY,                                                                   
+      Solved=False,                                                                              
+      Unemployment_rating=VERY LOW}      => {QpsOffence=THEFT}     0.01144609  0.6076991 1.664440
+[68] {QpsOffence=THEFT,                                                                          
+      Solved=True,                                                                               
+      Unemployment_rating=VERY LOW}      => {Suburb=BRISBANE CITY} 0.01529282  0.6056554 1.987893
+[69] {QpsOffence=PROPERTY_DAMAGE,                                                                
+      Unemployment_rating=LOW}           => {Solved=False}         0.01923364  0.6038228 1.359060
+[70] {Suburb=BRISBANE CITY,                                                                      
+      QpsOffence=FRAUD}                  => {Solved=True}          0.01807686  0.6035853 1.086160
+[71] {Suburb=KANGAROO POINT,                                                                     
+      Unemployment_rating=MEDIUM}        => {Solved=True}          0.01116382  0.5994056 1.078639
+[72] {QpsOffence=UNLAWFUL_MOTOR_VEHICLE} => {Solved=False}         0.01362683  0.5972829 1.344340
+[73] {QpsOffence=THEFT,                                                                          
+      Solved=True,                                                                               
+      Unemployment_rating=LOW}           => {Suburb=BRISBANE CITY} 0.02092731  0.5967487 1.958660
+[74] {Suburb=BRISBANE CITY,                                                                      
+      Solved=False,                                                                              
+      Unemployment_rating=MEDIUM}        => {QpsOffence=THEFT}     0.02511720  0.5946017 1.628568
+[75] {Suburb=BRISBANE CITY,                                                                      
+      Unemployment_rating=VERY LOW}      => {Solved=True}          0.04337671  0.5928139 1.066777
+[76] {Solved=False,                                                                              
+      Unemployment_rating=LOW}           => {QpsOffence=THEFT}     0.08021675  0.5927123 1.623393
+[77] {Suburb=KELVIN GROVE}               => {Solved=False}         0.01168963  0.5892857 1.326341
+[78] {Unemployment_rating=HIGH}          => {Solved=True}          0.05717512  0.5866318 1.055652
+[79] {Unemployment_rating=MEDIUM}        => {Solved=True}          0.20758497  0.5677243 1.021628
+[80] {QpsOffence=THEFT,                                                                          
+      Solved=True}                       => {Suburb=BRISBANE CITY} 0.06719322  0.5637335 1.850296
+[81] {Suburb=BRISBANE CITY,                                                                      
+      QpsOffence=THEFT,                                                                          
+      Unemployment_rating=VERY LOW}      => {Solved=False}         0.01941076  0.5593301 1.258918
+[82] {QpsOffence=FRAUD,                                                                          
+      Unemployment_rating=MEDIUM}        => {Solved=True}          0.01449580  0.5558149 1.000197
+[83] {Suburb=EAST BRISBANE}              => {Solved=False}         0.01419692  0.5549546 1.249069
+[84] {Suburb=WEST END}                   => {Solved=False}         0.02163024  0.5542476 1.247478
+[85] {Solved=False}                      => {QpsOffence=THEFT}     0.24591389  0.5534931 1.515975
 > 
 > 
 > proc.time()
    user  system elapsed 
-  2.887   0.230   3.321 
+  3.050   0.211   3.364 

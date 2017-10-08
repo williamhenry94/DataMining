@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 from matplotlib import style
 from sklearn import metrics
 
-
 def getProgressiveClassOfUnemployment():
     dataframe = pd.read_csv("./datasets_csv/Employment-Data-Brisbane.csv",usecols=[0,6])
 
@@ -18,8 +17,8 @@ def getProgressiveClassOfUnemployment():
 
 
     for i in arr:
-        if i[0] >=2007:
-            i[0] = i[0]-2007
+        if i[0] >=2000:
+            i[0] = i[0]-2000
             X.append(i)
 
     X = np.array(X)
@@ -29,7 +28,6 @@ def getProgressiveClassOfUnemployment():
     core_samples_mask = np.zeros_like(db.labels_, dtype=None)
     core_samples_mask[db.core_sample_indices_] = True
     labels = db.labels_
-    print (labels)
 
 
     # Number of clusters in labels, ignoring noise if present.
@@ -129,4 +127,66 @@ def getProgressiveClassOfCPI():
 
     # df.to_csv("Employment-Data-Brisbane-labeled.csv", sep=',', encoding= "utf-8")  
 
-getProgressiveClassOfCPI()
+
+def getInterval():
+    
+    dataframe = pd.read_csv("./datasets_csv/Employment-Data-Brisbane.csv",usecols=[0,6])
+
+    arr = dataframe.as_matrix()
+
+    X = []
+
+
+    for i in arr:
+        if i[0] >=2000:
+            i[0] = i[0]-2000
+            X.append(i)
+
+    X = np.array(X)
+    
+
+    temp = []
+    hist = plt.hist(X[:,1],bins=5)
+    
+    
+    interval = hist[1]
+    
+    for i in range(len(interval)):
+        if i != len(interval)-1:
+            temp.append((interval[i], interval[i+1]))
+
+    for i in X:
+        i[0] += 2000
+
+    string_label =[]
+    for i in X:
+
+        if temp[0][0]<= i[1] and i[1]<=temp[0][1]:
+            
+            string_label.append("VERY LOW")
+       
+        elif temp[1][0]<= i[1] and i[1]<=temp[1][1]:
+            
+            string_label.append("LOW")
+        elif temp[2][0]<= i[1] and i[1]<=temp[2][1]:
+            
+            string_label.append("MEDIUM")
+        elif temp[3][0]<= i[1] and i[1]<=temp[3][1]:
+            
+            string_label.append("HIGH")
+        elif temp[4][0]<= i[1] and i[1]<=temp[4][1]:
+            
+            string_label.append("VERY HIGH")
+
+    string_label = np.array(string_label)
+    
+    df = pd.DataFrame(np.column_stack([X[:,0], X[:,1],string_label[:]]),
+    columns = ["MeshBlockId",'Unemployment Rate (%)','label'])
+
+    df.to_csv("Employment-Data-Brisbane-labeled.csv", sep=',', encoding= "utf-8")
+    
+
+    
+    
+
+getInterval()
