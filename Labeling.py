@@ -1,6 +1,6 @@
 import numpy as np 
 import pandas as pd 
-from sklearn.cluster import DBSCAN, KMeans, AgglomerativeClustering
+from sklearn.cluster import DBSCAN, KMeans
 from Offences import Offences
 import time
 from datetime import datetime
