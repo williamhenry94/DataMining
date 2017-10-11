@@ -12,4 +12,7 @@ All of these codes are for preprocessing the dataset and we use R to get the ass
     - Terminal: **The environment should be able to detect the R compiler**
         * Go to the R folder
         * ```Rscript --vanilla association_rule_mining.R```
+
+
+**Note for the CPI-Crime data codes (R/Python), they are on CPI branch of this git repo!!!!**
     
