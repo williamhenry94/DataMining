@@ -3,10 +3,10 @@ library(arules)
 args = commandArgs(trailingOnly=TRUE)
 generateAssociationRule <- function(){
     data_set <- read_csv("/Users/williamhenry/Documents/DataMining.Main/datasets_csv/All_datas.csv") #args[1]
-    data_set_min <-subset(data_set,select=c('Unemployment_rating','QpsOffence'))
-    part_of_data <- data_set_min[,1:2]
+    data_set_min <-subset(data_set,select=c('Unemployment_rating','QpsOffence','Solved','Suburb','MeshBlockId','OffenceCount'))
+    part_of_data <- data_set_min[,1:4]
     part_of_data <-data.frame(sapply(part_of_data,as.factor))
-    rules <- apriori(part_of_data,parameter = list(supp=0.001, conf=0.3,minlen=2))
+    rules <- apriori(part_of_data,parameter = list(supp=0.001, conf=0.4,minlen=2))
     rules <- sort(rules, by="lift")
    
     inspect(rules)

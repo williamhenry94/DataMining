@@ -184,9 +184,77 @@ def getInterval():
     columns = ["MeshBlockId",'Unemployment Rate (%)','label'])
 
     df.to_csv("Employment-Data-Brisbane-labeled.csv", sep=',', encoding= "utf-8")
+
+
+def getIntervalSummary():
+    
+    dataframe = pd.read_csv("./datasets_csv/Summary_Offences.csv",usecols=[1,2,3,4,5])
+
+    arr = dataframe.as_matrix()
+
+    
+
+    temp = []
+    print((arr[:,4]).tolist())
+    hist = plt.hist(arr[:,4],bins=10)
+    # plt.show()
+    
+    print (hist)
+    interval = hist[1]
+    
+    for i in range(len(interval)):
+        if i != len(interval)-1:
+            temp.append((interval[i], interval[i+1]))
+
+    string_label =[]
+    for i in arr[:,4]:
+        
+        
+        if temp[0][0]<= i and i<=temp[0][1]:
+            
+            string_label.append("CAT1")
+       
+        elif temp[1][0]<= i and i<=temp[1][1]:
+            
+            string_label.append("CAT2")
+        elif temp[2][0]<= i and i<=temp[2][1]:
+            
+            string_label.append("CAT3")
+        elif temp[3][0]<= i and i<=temp[3][1]:
+            
+            string_label.append("CAT4")
+        elif temp[4][0]<= i and i<=temp[4][1]:
+            
+            string_label.append("CAT5")
+        elif temp[5][0]<= i and i<=temp[5][1]:
+            
+            string_label.append("CAT6")
+        elif temp[6][0]<= i and i<=temp[6][1]:
+            
+            string_label.append("CAT7")
+        elif temp[7][0]<= i and i<=temp[7][1]:
+            
+            string_label.append("CAT8")
+        elif temp[8][0]<= i and i<=temp[8][1]:
+            
+            string_label.append("CAT9")
+        elif temp[8][0]<= i and i<=temp[9][1]:
+            
+            string_label.append("CAT10")
+        
+       
+        
+
+    string_label = np.array(string_label)
+    # print(len(string_label))
+    # print(len(arr[:,0]))
+    df = pd.DataFrame(np.column_stack([arr[:,0], arr[:,1],arr[:,2],arr[:,3],arr[:,4],string_label[:]]),
+    columns = ["MeshBlockId",'Solved','Unemployment_rating','QpsOffence','TotalOffences','TotalOffencesLabel'])
+
+    df.to_csv("Summary_Offences_Labeled.csv", sep=',', encoding= "utf-8")
     
 
     
     
 
-getInterval()
+getIntervalSummary()
