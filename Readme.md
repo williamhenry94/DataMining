@@ -13,6 +13,4 @@ All of these codes are for preprocessing the dataset and we use R to get the ass
         * Go to the R folder
         * ```Rscript --vanilla association_rule_mining.R```
 4. The R code relies on csv dataset so. You can edit the filepath on line 5 of the code.
-
-**Note for the CPI-Crime data codes (R/Python), they are on CPI branch of this git repo!!!!**
     
